@@ -1,9 +1,5 @@
 // server/server.js
 const express = require("express");
-const cors = require('cors');
-const connectDB = require("./database"); // Импортируем функцию подключения к базе данных
-const User = require("../models/user"); // Модель пользователя
-const userRoutes = require('../routes/user');
 const path = require('path');
 
 const app = express();
@@ -23,10 +19,8 @@ const app = express();
 //});
 app.use(express.static(path.join(__dirname, '../src')));
 // Подключаемся к базе данных MongoDB
-connectDB();
 
 // Middleware для парсинга JSON
-app.use(express.json(), userRoutes);
 
 // Маршрут для проверки и добавления пользователя
 //app.post("/check-and-add-user", async (req, res) => {
