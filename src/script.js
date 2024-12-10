@@ -134,12 +134,18 @@ function renderTasks() {
 }
 // Завершить задачу
 function markAsCompleted(task) {
-    task.state = "completed";
+    if (task.state == "completed")
+        task.state = "default";
+    else
+        task.state = "completed";
     saveTasks();
     renderTasks(); // Обновляем UI
 }
 function markAsCanceled(task) {
-    task.state = "canceled";
+    if (task.state == "canceled")
+        task.state = "default";
+    else
+        task.state = "canceled";
     saveTasks();
     renderTasks(); // Обновляем UI
 }
@@ -170,6 +176,15 @@ function createTaskElement(task) {
     //    renderTasks();
     //  }
     //});
+    taskEl.addEventListener("dragstart", function (e) {
+        var _a;
+        taskEl.classList.add("dragging");
+        (_a = e.dataTransfer) === null || _a === void 0 ? void 0 : _a.setData("text/plain", task.id);
+    });
+    // Обработчик для завершения перетаскивания
+    taskEl.addEventListener("dragend", function () {
+        taskEl.classList.remove("dragging");
+    });
     // Обработчик кнопки добавления подзадачи
     var addSubtaskButton = taskEl.querySelector(".add-subtask-btn");
     addSubtaskButton.addEventListener("click", function () {
