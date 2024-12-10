@@ -32,8 +32,15 @@ closePopupBtn.addEventListener("click", () => {
   closePopup();
 });
 
+// Функция для закрытия попапа
 function closePopup() {
-  popup.classList.add("hidden");
+  document.getElementById('popup')?.classList.add('hidden');
+  currentTaskId = null; // Сброс ID задачи
+  form.reset();
+}
+function closeEditPopup() {
+  document.getElementById('edit_popup')?.classList.add('hidden');
+  currentTaskId = null; // Сброс ID задачи
   form.reset();
 }
 
@@ -102,13 +109,26 @@ function createSubtaskElement(task: Task, subtask: Subtask): HTMLElement {
     <div class="subtask-content">${subtask.name}</div>
     <div class="subtask-actions">
       <input type="checkbox" class="complete-checkbox" ${subtask.state === "completed" ? "checked" : ""} />
+      <button class="edit-btn-sub"><i class="fas fa-edit"></i></button>
       <button class="delete-btn-sub"><i class="fas fa-trash"></i></button>
     </div>
   `;
 
   const subtaskContent = subtaskEl.querySelector(".subtask-content") as HTMLElement;
   const completeCheckbox = subtaskEl.querySelector(".complete-checkbox") as HTMLInputElement;
-  const deleteButton = subtaskEl.querySelector(".delete-btn-sub") as HTMLElement;
+  const editButton = subtaskEl.querySelector(".edit-btn-sub") as HTMLButtonElement;
+  const deleteButton = subtaskEl.querySelector(".delete-btn-sub") as HTMLButtonElement;
+
+  // Обработчик для кнопки редактирования
+  editButton.addEventListener("click", () => {
+    const newSubtaskName = prompt("Введите новое название подзадачи:", subtask.name);
+    if (newSubtaskName && newSubtaskName.trim() !== "") {
+      subtask.name = newSubtaskName.trim();
+      subtaskContent.textContent = newSubtaskName.trim(); // Обновляем текст подзадачи
+      saveTasks();
+      renderTasks();
+    }
+  });
 
   // Обработчик для чекбокса "Выполнено"
   completeCheckbox.addEventListener("change", () => {
@@ -137,7 +157,6 @@ function createSubtaskElement(task: Task, subtask: Subtask): HTMLElement {
 
   return subtaskEl;
 }
-
 
 
 // Сохранение задач в localStorage
@@ -179,16 +198,34 @@ function createTaskElement(task: Task): HTMLElement {
     </div>
     <div>${task.description || ""}</div>
     <div>${task.deadline || ""}</div>
+    <button class="edit-btn-task"><i class="fas fa-edit"></i></button> <!-- Кнопка редактирования задачи -->
     <button class="add-subtask-btn">+</button>
     <div class="subtasks-container"></div>
   `;
 
   const subtasksContainer = taskEl.querySelector(".subtasks-container") as HTMLElement;
+  const editButton = taskEl.querySelector('.edit-btn-task') as HTMLButtonElement;
+
+  // Обработчик кнопки редактирования задачи
+  editButton.addEventListener('click', () => {
+    openEditTaskPopup(task);
+  });
 
   // Отображаем все подзадачи
   task.subtasks.forEach((subtask) => {
     subtasksContainer.appendChild(createSubtaskElement(task, subtask));
   });
+
+  // Обработчик кнопки редактирования задачи
+  //editButton.addEventListener("click", () => {
+  //  const newTaskName = prompt("Введите новое название задачи:", task.name);
+  //  if (newTaskName && newTaskName.trim() !== "") {
+  //    task.name = newTaskName.trim(); // Обновляем название задачи
+  //    taskEl.querySelector("strong")!.textContent = newTaskName.trim(); // Обновляем текст задачи
+  //    saveTasks();
+  //    renderTasks();
+  //  }
+  //});
 
   // Обработчик кнопки добавления подзадачи
   const addSubtaskButton = taskEl.querySelector(".add-subtask-btn") as HTMLElement;
@@ -199,17 +236,6 @@ function createTaskElement(task: Task): HTMLElement {
       // После добавления подзадачи обновим отображение
       renderTasks();
     }
-  });
-
-  // Обработчик для начала перетаскивания
-  taskEl.addEventListener("dragstart", (e) => {
-    taskEl.classList.add("dragging");
-    e.dataTransfer?.setData("text/plain", task.id);
-  });
-
-  // Обработчик для завершения перетаскивания
-  taskEl.addEventListener("dragend", () => {
-    taskEl.classList.remove("dragging");
   });
 
   // Добавляем кнопки "Выполнено", "Отменить" и "Удалить"
@@ -290,6 +316,7 @@ function createTaskElement(task: Task): HTMLElement {
 }
 
 
+
 function showDeletePopup(taskId: string) {
   const confirmDelete = confirm("Вы уверены, что хотите удалить эту задачу?");
   if (confirmDelete) {
@@ -322,7 +349,82 @@ function confirmDeleteTask(taskId: string) {
   closeDeletePopup(); // Закрываем попап
 }
 
+// script.ts
+//function loginUser(telegramId: string, name: string, email: string) {
+//  fetch('http://localhost:5000/api/user/login', {
+//    method: 'POST',
+//    headers: {
+//      'Content-Type': 'application/json',
+//    },
+//    body: JSON.stringify({ telegramId, name, email }),
+//  })
+//    .then(response => response.json())
+//    .then(data => {
+//      if (data.message === 'User created') {
+//        console.log('Новый пользователь создан:', data.user);
+//        localStorage.setItem('user', JSON.stringify(data.user));
+//      } else if (data.message === 'User already exists') {
+//        console.log('Пользователь уже существует:', data.user);
+//        localStorage.setItem('user', JSON.stringify(data.user));
+//      }
+//    })
+//    .catch(error => {
+//      console.error('Ошибка при входе:', error);
+//    });
+//}
+//
+//// Пример вызова функции при входе
+//const telegramId = '12345';
+//const user_name = 'John Doe';
+//const email = 'john@example.com';
 
+//loginUser(telegramId, user_name, email);
 
 // Инициализация приложения
+
+let currentTaskId: string | null = null;
+
+// Функция для открытия попапа с предзаполнением значений
+function openEditTaskPopup(task: Task) {
+  // Присваиваем ID задачи для использования позже
+  currentTaskId = task.id;
+  
+  // Заполняем поля значениями текущей задачи
+  (document.getElementById('edit_task-name') as HTMLInputElement).value = task.name;
+  (document.getElementById('edit_task-description') as HTMLTextAreaElement).value = task.description || '';
+  (document.getElementById('edit_task-importance') as HTMLInputElement).value = task.importance.toString();
+  (document.getElementById('edit_task-deadline') as HTMLInputElement).value = task.deadline || '';
+  
+  // Открываем попап
+  document.getElementById('edit_popup')?.classList.remove('hidden');
+}
+
+
+
+// Функция для сохранения изменений задачи
+function saveTaskEdits() {
+  if (currentTaskId === null) return;
+
+  const task = tasks.find((t) => t.id === currentTaskId);
+  if (task) {
+    // Получаем обновленные значения из полей попапа
+    task.name = (document.getElementById('edit_task-name') as HTMLInputElement).value;
+    task.description = (document.getElementById('edit_task-description') as HTMLTextAreaElement).value;
+    task.importance = parseInt((document.getElementById('edit_task-importance') as HTMLInputElement).value);
+    task.deadline = (document.getElementById('edit_task-deadline') as HTMLInputElement).value;
+
+    // Сохраняем задачи
+    saveTasks();
+    renderTasks();
+
+    // Закрываем попап
+    closeEditPopup();
+  }
+}
+
+// Добавляем обработчики
+document.getElementById('submit-edit-task')?.addEventListener('click', saveTaskEdits);
+document.querySelector('.close-btn')?.addEventListener('click', closePopup);
+document.querySelector('.close-btn')?.addEventListener('click', closeEditPopup);
+
 renderTasks();

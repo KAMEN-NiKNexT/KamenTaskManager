@@ -1,3 +1,4 @@
+var _a, _b, _c;
 var taskContainer = document.getElementById("task-container");
 var addTaskBtn = document.getElementById("add-task-btn");
 var popup = document.getElementById("popup");
@@ -12,8 +13,17 @@ addTaskBtn.addEventListener("click", function () {
 closePopupBtn.addEventListener("click", function () {
     closePopup();
 });
+// Функция для закрытия попапа
 function closePopup() {
-    popup.classList.add("hidden");
+    var _a;
+    (_a = document.getElementById('popup')) === null || _a === void 0 ? void 0 : _a.classList.add('hidden');
+    currentTaskId = null; // Сброс ID задачи
+    form.reset();
+}
+function closeEditPopup() {
+    var _a;
+    (_a = document.getElementById('edit_popup')) === null || _a === void 0 ? void 0 : _a.classList.add('hidden');
+    currentTaskId = null; // Сброс ID задачи
     form.reset();
 }
 // Добавление задачи
@@ -70,10 +80,21 @@ function createSubtaskElement(task, subtask) {
     var subtaskEl = document.createElement("div");
     subtaskEl.className = "subtask ".concat(subtask.state);
     // Создаём HTML-разметку для подзадачи
-    subtaskEl.innerHTML = "\n    <div class=\"subtask-content\">".concat(subtask.name, "</div>\n    <div class=\"subtask-actions\">\n      <input type=\"checkbox\" class=\"complete-checkbox\" ").concat(subtask.state === "completed" ? "checked" : "", " />\n      <button class=\"delete-btn-sub\"><i class=\"fas fa-trash\"></i></button>\n    </div>\n  ");
+    subtaskEl.innerHTML = "\n    <div class=\"subtask-content\">".concat(subtask.name, "</div>\n    <div class=\"subtask-actions\">\n      <input type=\"checkbox\" class=\"complete-checkbox\" ").concat(subtask.state === "completed" ? "checked" : "", " />\n      <button class=\"edit-btn-sub\"><i class=\"fas fa-edit\"></i></button>\n      <button class=\"delete-btn-sub\"><i class=\"fas fa-trash\"></i></button>\n    </div>\n  ");
     var subtaskContent = subtaskEl.querySelector(".subtask-content");
     var completeCheckbox = subtaskEl.querySelector(".complete-checkbox");
+    var editButton = subtaskEl.querySelector(".edit-btn-sub");
     var deleteButton = subtaskEl.querySelector(".delete-btn-sub");
+    // Обработчик для кнопки редактирования
+    editButton.addEventListener("click", function () {
+        var newSubtaskName = prompt("Введите новое название подзадачи:", subtask.name);
+        if (newSubtaskName && newSubtaskName.trim() !== "") {
+            subtask.name = newSubtaskName.trim();
+            subtaskContent.textContent = newSubtaskName.trim(); // Обновляем текст подзадачи
+            saveTasks();
+            renderTasks();
+        }
+    });
     // Обработчик для чекбокса "Выполнено"
     completeCheckbox.addEventListener("change", function () {
         if (completeCheckbox.checked) {
@@ -128,12 +149,27 @@ function createTaskElement(task) {
     var taskEl = document.createElement("div");
     taskEl.className = "task ".concat(task.state);
     taskEl.draggable = true;
-    taskEl.innerHTML = "\n    <div>\n      <strong>".concat(task.name, "</strong> (Importance: ").concat(task.importance, ")\n    </div>\n    <div>").concat(task.description || "", "</div>\n    <div>").concat(task.deadline || "", "</div>\n    <button class=\"add-subtask-btn\">+</button>\n    <div class=\"subtasks-container\"></div>\n  ");
+    taskEl.innerHTML = "\n    <div>\n      <strong>".concat(task.name, "</strong> (Importance: ").concat(task.importance, ")\n    </div>\n    <div>").concat(task.description || "", "</div>\n    <div>").concat(task.deadline || "", "</div>\n    <button class=\"edit-btn-task\"><i class=\"fas fa-edit\"></i></button> <!-- \u041A\u043D\u043E\u043F\u043A\u0430 \u0440\u0435\u0434\u0430\u043A\u0442\u0438\u0440\u043E\u0432\u0430\u043D\u0438\u044F \u0437\u0430\u0434\u0430\u0447\u0438 -->\n    <button class=\"add-subtask-btn\">+</button>\n    <div class=\"subtasks-container\"></div>\n  ");
     var subtasksContainer = taskEl.querySelector(".subtasks-container");
+    var editButton = taskEl.querySelector('.edit-btn-task');
+    // Обработчик кнопки редактирования задачи
+    editButton.addEventListener('click', function () {
+        openEditTaskPopup(task);
+    });
     // Отображаем все подзадачи
     task.subtasks.forEach(function (subtask) {
         subtasksContainer.appendChild(createSubtaskElement(task, subtask));
     });
+    // Обработчик кнопки редактирования задачи
+    //editButton.addEventListener("click", () => {
+    //  const newTaskName = prompt("Введите новое название задачи:", task.name);
+    //  if (newTaskName && newTaskName.trim() !== "") {
+    //    task.name = newTaskName.trim(); // Обновляем название задачи
+    //    taskEl.querySelector("strong")!.textContent = newTaskName.trim(); // Обновляем текст задачи
+    //    saveTasks();
+    //    renderTasks();
+    //  }
+    //});
     // Обработчик кнопки добавления подзадачи
     var addSubtaskButton = taskEl.querySelector(".add-subtask-btn");
     addSubtaskButton.addEventListener("click", function () {
@@ -143,16 +179,6 @@ function createTaskElement(task) {
             // После добавления подзадачи обновим отображение
             renderTasks();
         }
-    });
-    // Обработчик для начала перетаскивания
-    taskEl.addEventListener("dragstart", function (e) {
-        var _a;
-        taskEl.classList.add("dragging");
-        (_a = e.dataTransfer) === null || _a === void 0 ? void 0 : _a.setData("text/plain", task.id);
-    });
-    // Обработчик для завершения перетаскивания
-    taskEl.addEventListener("dragend", function () {
-        taskEl.classList.remove("dragging");
     });
     // Добавляем кнопки "Выполнено", "Отменить" и "Удалить"
     var buttons = document.createElement("div");
@@ -245,5 +271,70 @@ function confirmDeleteTask(taskId) {
     renderTasks(); // Перерисовываем список задач
     closeDeletePopup(); // Закрываем попап
 }
+// script.ts
+//function loginUser(telegramId: string, name: string, email: string) {
+//  fetch('http://localhost:5000/api/user/login', {
+//    method: 'POST',
+//    headers: {
+//      'Content-Type': 'application/json',
+//    },
+//    body: JSON.stringify({ telegramId, name, email }),
+//  })
+//    .then(response => response.json())
+//    .then(data => {
+//      if (data.message === 'User created') {
+//        console.log('Новый пользователь создан:', data.user);
+//        localStorage.setItem('user', JSON.stringify(data.user));
+//      } else if (data.message === 'User already exists') {
+//        console.log('Пользователь уже существует:', data.user);
+//        localStorage.setItem('user', JSON.stringify(data.user));
+//      }
+//    })
+//    .catch(error => {
+//      console.error('Ошибка при входе:', error);
+//    });
+//}
+//
+//// Пример вызова функции при входе
+//const telegramId = '12345';
+//const user_name = 'John Doe';
+//const email = 'john@example.com';
+//loginUser(telegramId, user_name, email);
 // Инициализация приложения
+var currentTaskId = null;
+// Функция для открытия попапа с предзаполнением значений
+function openEditTaskPopup(task) {
+    var _a;
+    // Присваиваем ID задачи для использования позже
+    currentTaskId = task.id;
+    // Заполняем поля значениями текущей задачи
+    document.getElementById('edit_task-name').value = task.name;
+    document.getElementById('edit_task-description').value = task.description || '';
+    document.getElementById('edit_task-importance').value = task.importance.toString();
+    document.getElementById('edit_task-deadline').value = task.deadline || '';
+    // Открываем попап
+    (_a = document.getElementById('edit_popup')) === null || _a === void 0 ? void 0 : _a.classList.remove('hidden');
+}
+// Функция для сохранения изменений задачи
+function saveTaskEdits() {
+    if (currentTaskId === null)
+        return;
+    var task = tasks.find(function (t) { return t.id === currentTaskId; });
+    if (task) {
+        // Получаем обновленные значения из полей попапа
+        task.name = document.getElementById('edit_task-name').value;
+        task.description = document.getElementById('edit_task-description').value;
+        task.importance = parseInt(document.getElementById('edit_task-importance').value);
+        task.deadline = document.getElementById('edit_task-deadline').value;
+        // Сохраняем задачи
+        saveTasks();
+        renderTasks();
+        // Закрываем попап
+        closeEditPopup();
+    }
+}
+// Добавляем обработчики
+(_a = document.getElementById('submit-edit-task')) === null || _a === void 0 ? void 0 : _a.addEventListener('click', saveTaskEdits);
+(_b = document.querySelector('.close-btn')) === null || _b === void 0 ? void 0 : _b.addEventListener('click', closePopup);
+(_c = document.querySelector('.close-btn')) === null || _c === void 0 ? void 0 : _c.addEventListener('click', closeEditPopup);
 renderTasks();

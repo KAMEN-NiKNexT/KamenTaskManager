@@ -238,7 +238,7 @@ header button:hover {
 }
 
 /* Popup */
-#popup {
+#popup, #edit_popup {
   position: fixed;
   top: 0;
   left: 0;
@@ -251,7 +251,7 @@ header button:hover {
   z-index: 1000;
 }
 
-#popup.hidden {
+#popup.hidden, #edit_popup.hidden {
   display: none;
 }
 
