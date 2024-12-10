@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "target": "ES6",                        // Версия JS, в которую компилировать (например, ES6)
+    "module": "commonjs",                   // Модульная система (например, commonjs или ESNext)
+    "outDir": "./dist",                     // Папка, куда компилировать JS
+    "rootDir": "./src",                     // Папка с исходным кодом TypeScript
+    "strict": true,                         // Включает строгую проверку типов
+    "esModuleInterop": true,                // Улучшает совместимость с модулями ES6
+    "forceConsistentCasingInFileNames": true // Предотвращает проблемы с регистром в путях файлов
+  },
+  "include": ["src/**/*"],                   // Файлы/папки, которые нужно компилировать
+  "exclude": ["node_modules", "dist"]        // Исключенные папки
+}
