@@ -176,13 +176,27 @@ let scrollTop: number;
 let blockClick = false; // Флаг для блокировки кликов во время перетаскивания
 
 // Отключаем выделение текста
-tabsContainer.style.userSelect = 'none';
+const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+
+const startEvent = isTouchDevice ? 'touchstart' : 'mousedown';
+const moveEvent = isTouchDevice ? 'touchmove' : 'mousemove';
+const endEvent = isTouchDevice ? 'touchend' : 'mouseup';
+const cancelEvent = isTouchDevice ? 'touchcancel' : 'mouseleave'; 
 
 // Начало перетаскивания
-tabsContainer.addEventListener('mousedown', (e) => {
-  // Флаг блокировки кликов активируется только если начался drag
+tabsContainer.addEventListener(startEvent, (e: MouseEvent | TouchEvent) => {
+  let pageY: number;
+
+  if (isTouchDevice) {
+    // Приводим событие к типу TouchEvent, чтобы получить e.touches
+    pageY = (e as TouchEvent).touches[0].pageY;
+  } else {
+    // Приводим событие к типу MouseEvent для обработки e.pageY
+    pageY = (e as MouseEvent).pageY;
+  }
+
   isDragging = true;
-  startY = e.pageY - tabsContainer.offsetTop; // Начальная позиция по вертикали
+  startY = pageY - tabsContainer.offsetTop; // Начальная позиция по вертикали
   scrollTop = tabsContainer.scrollTop; // Текущая прокрутка
   tabsContainer.style.cursor = 'grabbing'; // Курсор меняется на "схватить"
 
@@ -196,14 +210,13 @@ tabsContainer.addEventListener('mousedown', (e) => {
 });
 
 // Выход из области перетаскивания
-tabsContainer.addEventListener('mouseleave', () => {
+tabsContainer.addEventListener(cancelEvent, () => {
   isDragging = false;
   tabsContainer.style.cursor = 'grab'; // Курсор меняется обратно на "схватить"
   blockClick = false; // Разблокируем клики
 });
-
 // Завершение перетаскивания
-tabsContainer.addEventListener('mouseup', () => {
+tabsContainer.addEventListener(endEvent, () => {
   isDragging = false;
   tabsContainer.style.cursor = 'grab'; // Курсор меняется обратно на "схватить"
   setTimeout(() => {
@@ -212,13 +225,25 @@ tabsContainer.addEventListener('mouseup', () => {
 });
 
 // Перетаскивание
-tabsContainer.addEventListener('mousemove', (e) => {
+tabsContainer.addEventListener(moveEvent, (e: MouseEvent | TouchEvent) => {
   if (!isDragging) return; // Если не перетаскиваем, ничего не делаем
   e.preventDefault(); // Останавливаем стандартный скроллинг
-  const y = e.pageY - tabsContainer.offsetTop; // Текущая позиция мыши по вертикали
+
+  let pageY: number;
+
+  if (isTouchDevice) {
+    // Приводим событие к типу TouchEvent, чтобы получить e.touches
+    pageY = (e as TouchEvent).touches[0].pageY;
+  } else {
+    // Приводим событие к типу MouseEvent для обработки e.pageY
+    pageY = (e as MouseEvent).pageY;
+  }
+
+  const y = pageY - tabsContainer.offsetTop; // Текущая позиция мыши по вертикали
   const walk = (y - startY); // Скорость прокрутки
-  tabsContainer.scrollTop = scrollTop - walk; // Прокручиваем вверх/вниз
+  tabsContainer.scrollTop = scrollTop - walk; 
 });
+
 
 const categoryFilter = document.querySelector("#category-filter") as HTMLSelectElement;
 
@@ -287,24 +312,37 @@ function createTaskElement(task: Task): HTMLElement {
   taskEl.draggable = true;
 
   taskEl.innerHTML = `
-  <div>
-    <strong>${task.name}</strong> (Importance: ${task.importance})
+  <div class="task-card">
+    <div class="task-header">
+      <strong>${task.name}</strong>
+      <span class="task-importance">⭐ ${task.importance}</span>
+    </div>
+    <div class="task-additional-info">
+      <div class="task-category">${task.category}</div>
+      <span class="task-deadline">${task.deadline || ""}</span>
+    </div>
+    <p class="task-description">${task.description || ""}</p>
+    <div class="subtasks-container"></div>
+    <div class="task-actions"></div>
+    <div class="task-footer">
+      <div class="task-buttons">
+        <button class="edit-btn-task" title="Edit Task">
+          <i class="fas fa-edit"></i>
+        </button>
+        <button class="add-subtask-btn" title="Add Subtask">+</button>
+      </div>
+    </div>
   </div>
-  <div>Category: ${task.category}</div> <!-- Отображаем категорию -->
-  <div>${task.description || ""}</div>
-  <div>${task.deadline || ""}</div>
-  <button class="edit-btn-task"><i class="fas fa-edit"></i></button> <!-- Кнопка редактирования задачи -->
-  <button class="add-subtask-btn">+</button>
-  <div class="subtasks-container"></div>
-`;
+  `;
 
-const subtasksContainer = taskEl.querySelector(".subtasks-container") as HTMLElement;
-const editButton = taskEl.querySelector('.edit-btn-task') as HTMLButtonElement;
+  const subtasksContainer = taskEl.querySelector(".subtasks-container") as HTMLElement;
+  const editButton = taskEl.querySelector('.edit-btn-task') as HTMLButtonElement;
 
   // Обработчик кнопки редактирования задачи
   editButton.addEventListener('click', () => {
     openEditTaskPopup(task);
   });
+
   // Отображаем все подзадачи
   task.subtasks.forEach((subtask) => {
     subtasksContainer.appendChild(createSubtaskElement(task, subtask));
@@ -331,18 +369,30 @@ const editButton = taskEl.querySelector('.edit-btn-task') as HTMLButtonElement;
     }
   });
 
-  // Добавляем кнопки "Выполнено", "Отменить" и "Удалить"
-  const buttons = document.createElement("div");
-  buttons.className = "task-buttons";
-  buttons.innerHTML = `
-    <button class="complete-btn">Выполнено</button>
-    <button class="cancel-btn">Отменить</button>
-    <button class="delete-btn">
-      <i class="fas fa-trash"></i> <!-- Иконка мусорки -->
-    </button>`;
+  const footerButtonsContainer = taskEl.querySelector(".task-actions") as HTMLElement;
+
+  // Добавляем новые кнопки "Выполнено", "Отменить" и "Удалить" внутрь
+  const completeButton = document.createElement("button");
+  completeButton.classList.add("complete-btn");
+  completeButton.textContent = "Выполнено";
+  completeButton.title = "Mark as Complete";
+  footerButtonsContainer.appendChild(completeButton);
+
+  const cancelButton = document.createElement("button");
+  cancelButton.classList.add("cancel-btn");
+  cancelButton.textContent = "Отменить";
+  cancelButton.title = "Cancel Task";
+  footerButtonsContainer.appendChild(cancelButton);
+
+  const deleteButton = document.createElement("button");
+  deleteButton.classList.add("delete-btn");
+  deleteButton.innerHTML = `<i class="fas fa-trash"></i>`; // Иконка мусорки
+  deleteButton.title = "Delete Task";
+  const deleteContainer = taskEl.querySelector(".task-buttons") as HTMLElement;
+  deleteContainer.appendChild(deleteButton);
 
   // Обработчики кнопок
-  buttons.querySelector(".complete-btn")?.addEventListener("click", () => {
+  completeButton.addEventListener("click", () => {
     const taskToComplete = tasks.find((t) => t.id === task.id);
     if (taskToComplete) {
       markAsCompleted(taskToComplete);
@@ -350,7 +400,7 @@ const editButton = taskEl.querySelector('.edit-btn-task') as HTMLButtonElement;
   });
 
   // Обработчик кнопки "Отменить"
-  buttons.querySelector(".cancel-btn")?.addEventListener("click", () => {
+  cancelButton.addEventListener("click", () => {
     const taskToCancel = tasks.find((t) => t.id === task.id);
     if (taskToCancel) {
       markAsCanceled(taskToCancel);
@@ -358,16 +408,14 @@ const editButton = taskEl.querySelector('.edit-btn-task') as HTMLButtonElement;
   });
 
   // Обработчик кнопки "Удалить"
-  buttons.querySelector(".delete-btn")?.addEventListener("click", () => {
+  deleteButton.addEventListener("click", () => {
     openDeletePopup(task.id);
   });
 
   // Если задача выполнена, скрыть кнопку удаления
   if (task.state === "completed") {
-    buttons.querySelector(".delete-btn")?.classList.add("hidden");
+    deleteButton.classList.add("hidden");
   }
-
-  taskEl.appendChild(buttons);
 
   // Сохраняем ID задачи, чтобы можно было получить доступ к элементу при перерисовке
   taskEl.dataset.id = task.id;
@@ -407,6 +455,7 @@ const editButton = taskEl.querySelector('.edit-btn-task') as HTMLButtonElement;
 
   return taskEl;
 }
+
 
 
 

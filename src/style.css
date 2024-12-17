@@ -1,223 +1,3 @@
-
-.heder-main-control {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  /*margin-bottom: 2rem;*/
-}
-header {
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1rem;
-}
-
-header button {
-  padding: 0.5rem 1rem;
-  font-size: 1rem;
-  background-color: #4caf50;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-header button:hover {
-  background-color: #45a049;
-}
-
-/* Main */
-#task-container {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.task.dragging {
-  opacity: 0.5;
-  border: 2px dashed #007bff;
-}
-
-
-.task {
-  position: relative;
-  border: 1px solid #ccc;
-  padding: 10px;
-  margin: 5px 0;
-  border-radius: 8px;
-  background-color: #fff;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
-}
-.task .add-subtask-btn {
-  position: absolute;
-  bottom: 10px;
-  right: 100px;
-  background-color: #000000;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  width: 25px;
-  height: 25px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 18px;
-}
-
-.task .add-subtask-btn:hover {
-  background-color: #0056b3;
-}
-
-/* Скрытая строка с подзадачей */
-.task .subtask-container {
-  display: none;
-  margin-top: 10px;
-  padding-top: 10px;
-  border-top: 1px solid #ccc;
-}
-
-.task.open .subtask-container {
-  display: block;
-}
-
-/* Ввод для подзадачи */
-.subtask {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px;
-  margin: 5px 0;
-  border: 2px solid #ddd;
-  border-radius: 5px;
-  background-color: #f9f9f9;
-  transition: all 0.3s ease;
-}
-
-.subtask.completed {
-  background-color: #ffffff; /* Светло-зелёный для выполненных подзадач */
-}
-
-.subtask .subtask-content {
-  flex-grow: 1;
-  font-size: 16px;
-  transition: all 0.3s ease;
-}
-
-.subtask .subtask-actions {
-  display: flex;
-  align-items: center;
-}
-
-.subtask .complete-checkbox {
-  height: 20px;
-  width: 20px;
-  margin-right: 10px;
-  accent-color: #000000; 
-  /* Цвет галочки и обводки */
-  transition: all 0.3s ease; /* Плавный переход для изменений */
-}
-
-.subtask .delete-btn-sub {
-  background: none;
-  border: none;
-  color: #000000;
-  font-size: 18px;
-  cursor: pointer;
-  padding: 5px;
-  transition: color 0.3s ease;
-}
-
-.subtask .delete-btn-sub:hover {
-  color: #2e2e2e;
-}
-
-/* Стиль для выполненной подзадачи */
-.subtask.completed .subtask-content {
-  text-decoration: line-through;
-  opacity: 0.5; /* Полупрозрачный текст */
-}
-
-.subtask:hover {
-  background-color: #f7f7f7; /* Легкий синий фон */
-}
-
-/* Кнопка удаления */
-.task-buttons .delete-btn {
-  position: absolute;
-  top: 8px;
-  right: 9px;
-  background-color: transparent;
-  border: none;
-  cursor: pointer;
-  color: #000000; /* Цвет для удаления */
-  padding: 4px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 3px;
-  transition: background-color 0.3s ease, border-color 0.3s ease;
-  z-index: 1; /* Убедимся, что кнопка сверху */
-}
-
-.task-buttons .delete-btn:hover {
-  background-color: rgba(0, 0, 0, 0.1); /* Черный полупрозрачный фон при наведении */
-  border-color: rgba(0, 0, 0, 0.7); /* Более темная обводка */
-}
-
-.task-buttons .delete-btn i {
-  font-size: 14px; /* Размер иконки внутри кнопки */
-  padding: 2px;
-}
-
-.task.default {
-  background: #ffffff;
-}
-
-.task.completed {
-  background-color: #d4edda; /* Зеленый для завершенных задач */
-  opacity: 0.7;
-}
-
-.task.canceled {
-  background-color: #f8d7da; /* Красный для отмененных задач */
-  opacity: 0.7;
-}
-.task-buttons {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 10px;
-}
-/* Стили для кнопок */
-.task-buttons button {
-  padding: 5px 10px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 14px;
-  transition: background-color 0.3s;
-}
-
-/* Стили для выполненной задачи */
-.task.completed button {
-  background-color: #28a745;
-  color: white;
-}
-
-.task.completed button:hover {
-  background-color: #218838;
-}
-
-/* Стили для отмененной задачи */
-.task.canceled button {
-  background-color: #dc3545;
-  color: white;
-}
-
-.task.canceled button:hover {
-  background-color: #c82333;
-}
-
 /* Прячем элементы */
 .hidden {
   display: none;
@@ -243,12 +23,11 @@ header button:hover {
 
 .popup-content {
   background: #ffffff;
-  padding: 2rem;
-  border-radius: 8px;
+  padding: 15px;
+  border-radius: 12px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   position: relative;
-  width: 100%;
-  max-width: 400px;
+  width: 330px;
 }
 
 .popup-content h2 {
@@ -262,8 +41,9 @@ header button:hover {
 }
 
 .popup-content input,
+.popup-content select,
 .popup-content textarea {
-  width: 100%;
+  width: 95%;
   padding: 0.5rem;
   margin-bottom: 1rem;
   border: 1px solid #ccc;
@@ -273,7 +53,7 @@ header button:hover {
 .popup-content .submit-btn {
   padding: 0.5rem 1rem;
   font-size: 1rem;
-  background-color: #4caf50;
+  background-color: #0cf520;
   color: white;
   border: none;
   border-radius: 5px;
@@ -282,7 +62,7 @@ header button:hover {
 }
 
 .popup-content .submit-btn:hover {
-  background-color: #45a049;
+  background-color: #0cf520;
 }
 
 /* Close Button */
@@ -445,14 +225,19 @@ header button:hover {
 }
 
 
-
 body {
   max-width: 360px;
   padding: 1rem; /* Уменьшаем отступы */
   margin: 0 auto; /* Центрируем содержимое, без внешнего отступа */
-  background-color: #121212; /* Черный фон */
-  color: #ffffff; /* Белый цвет текста для контраста */
+  font-family: 'Unbounded', sans-serif, 'Roboto', 'Arial', sans-serif; /* Пример использования Unbounded и Roboto */
+  color: #ffffff;
+  background-color: #121212;
+}
+h1, h2, h3 {
   font-family: 'Unbounded', sans-serif;
+}
+p, span, li {
+  font-family: 'Roboto', sans-serif; /* Обычный текст в Roboto */
 }
 .header {
   width: 340;
@@ -462,7 +247,7 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  height: 70px; /* Устанавливаем высоту хедера */
+  height: 60px; /* Устанавливаем высоту хедера */
   margin-bottom: 5px;
 }
 
@@ -490,9 +275,9 @@ body {
   color: #ffffff;
   border-radius: 9px;
   border: 0px;
-  padding: 12px 10px;
+  padding: 10px 8px;
   text-align: center;
-  width: 130px;
+  width: 120px;
   cursor: pointer;
   transition: background-color 0.3s ease;
   font-size: 12px;
@@ -528,7 +313,10 @@ body {
   font-size: 18px; /* Размер шрифта */
   cursor: pointer; /* Курсор при наведении */
   transition: all 0.3s ease; /* Плавная анимация при изменении */
-  box-shadow: 0 4px 12px rgba(0, 255, 0, 0.3); /* Легкое свечение вокруг кнопки */
+  box-shadow: 0 2px 6px #0cf5204d; /* Легкое свечение вокруг кнопки */
+
+  animation: glowing 1.5s ease-in-out infinite; /* Анимация свечения при наведении */
+  margin-bottom: 5px;
 }
 
 /* Стиль кнопки при наведении */
@@ -550,11 +338,386 @@ body {
 
 /* Дополнительный эффект свечения */
 @keyframes glowing {
-  0% { box-shadow: 0 0 5px #0cf520, 0 0 10px #0cf520, 0 0 15px #0cf520; }
-  50% { box-shadow: 0 0 20px #0cf520, 0 0 30px #0cf520, 0 0 40px #0cf520; }
-  100% { box-shadow: 0 0 5px #0cf520, 0 0 10px #0cf520, 0 0 15px #0cf520; }
+  0% { box-shadow: 0 0 2px #0cf520, 0 0 5px #0cf520, 0 0 7px #0cf520; }
+  50% { box-shadow: 0 0 10px #0cf520, 0 0 15px #0cf520, 0 0 20px #0cf520; }
+  100% { box-shadow: 0 0 2px #0cf520, 0 0 5px #0cf520, 0 0 7px #0cf520; }
 }
 
-#add-task-btn:hover {
-  animation: glowing 1.5s ease-in-out infinite; /* Анимация свечения при наведении */
+
+/* Стили для самого фильтра */
+#category-filter {
+  width: 100%; /* Занимает всю ширину родительского элемента */
+  background-color: hsl(0, 0%, 7%,0); /* Белый фон */
+  color: #ffffff; /* Темный текст для контраста */
+  border: none; /* Без рамки */
+  border-radius: 12px; /* Закругленные углы */
+  padding: 8px 12px; /* Отступы внутри */
+  font-family: 'Unbounded', sans-serif; /* Шрифт */
+  font-size: 12px; /* Размер шрифта */
+  appearance: none; /* Отключаем стандартный стиль */
+  -webkit-appearance: none; /* Для Safari */
+  -moz-appearance: none; /* Для Firefox */
+}
+/* Стрелка выпадающего списка */
+#category-filter:hover {
+  right: 10px;
+  font-size: 12px;
+  color: #cfcfcf;
+}
+/* Стили для пунктов выпадающего списка */
+#category-filter option {
+  font-family: 'Unbounded', sans-serif;
+  color: #121212;
+  background-color: #ffffff00; 
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-radius: 12px;
+}
+
+#category-filter option:checked {
+  background-color: #0cf520; /* Зеленый фон для выбранного пункта */
+}
+
+#category-filter:focus {
+  outline: none;
+}
+
+.custom-select {
+  position: relative;
+  width: 100%;
+}
+.custom-select::after {
+  content: '▼'; /* Своя стрелка */
+  position: absolute;
+  top: 50%;
+  right: 16px;
+  transform: translateY(-50%);
+  color: #ffffff; /* Цвет стрелки */
+  font-size: 14px;
+  pointer-events: none; /* Игнорирует клики */
+}
+
+
+
+.task-card {
+  background-color: #ffffff; /* Белый фон */
+  border-radius: 12px; /* Закруглённые углы */
+  padding: 16px;
+  margin-bottom: 5px;
+  font-family: 'Roboto', sans-serif;
+  color: #333; /* Темный текст */
+  display: flex;
+  flex-direction: column; /* Отступ между блоками */
+}
+
+
+.task-header {
+  font-family: 'Unbounded', sans-serif;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 16px;
+  font-weight: bold;
+  color: #121212;
+}
+
+.task-importance {
+  color: #ffd000; /* Оранжевый цвет для важности */
+  font-size: 14px;
+}
+
+.task-additional-info{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: bold;
+  color: #121212;
+}
+
+/* Категория задачи */
+.task-category {
+  content: center;
+  font-size: 14px;
+  color: #ffffff;
+  width: fit-content;
+  background-color:#121212;
+  border-radius: 0px 12px 12px 0px; /* Закруглённые углы */
+  font-weight: bold;
+  padding: 2px 30px;
+
+}
+
+/* Описание задачи */
+.task-description {
+  font-size: 12px;
+  border: 2px;
+  color: #7e7e7e;
+  background-color:#ffffff;
+  border: 1px dashed #cfcfcf;
+  border-radius: 12px; /* Закруглённые углы */
+  font-weight: bold;
+  padding: 2px 5px;
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* Футер карточки */
+.task-footer {
+  display: flex;
+  justify-content: flex-end; /* Размещаем элементы по правому краю */
+  align-items: flex-end; /* Выравниваем по нижнему краю */
+  padding: 12px;
+  align-items: center;
+  font-size: 12px;
+  color: #777;
+  padding: 5px 5px;
+}
+
+/* --- Большие кнопки (выполнить и отменить) --- */
+.task-actions {
+  margin-top: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+}
+
+.task-actions button {
+  width: 180px; /* Ограничиваем максимальную ширину */
+  padding: 10px 0;
+  font-size: 14px;
+  font-weight: bold;
+  border: none;
+  color: #fff;
+  border-radius: 10px;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+/* --- Стили для каждой большой кнопки --- */
+.task-actions .complete-btn {
+  width: 210px;
+  background-color: #0cf520; /* Неоново-зеленый */
+}
+
+.task-actions .cancel-btn {
+  width: 100px;
+  background-color: #121212; /* Красный цвет */
+}
+.task-actions .complete-btn:hover {
+  background-color: #15d325; /* Неоново-зеленый */
+}
+
+.task-actions .cancel-btn:hover {
+  background-color: #313131; /* Красный цвет */
+}
+
+/* --- Маленькие кнопки (редактировать, удалить, добавить) --- */
+.task-footer .task-buttons {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end; /* Размещаем элементы справа */
+}
+
+.task-buttons button {
+  background-color: #121212; /* Светлый фон */
+  border: none;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px; /* Круглая кнопка */
+  color: #ffffff;
+  font-size: 12px;
+}
+
+.task-buttons button:hover {
+  background-color: #313131; /* Неоновый цвет */
+  color: #fff;
+}
+
+.task.dragging {
+  opacity: 0.5;
+  border: 2px dashed #0cf520;
+  border-radius: 12px; /* Круглая кнопка */
+}
+
+.subtasks-container {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px; /* Отступ между подзадачами */
+}
+.subtask {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  background-color: #ffffff; /* Белый фон */
+  padding: 8px 12px;
+  border: 1px solid #cfcfcf;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  margin-bottom: 2px;
+}
+/* Стиль подзадач */
+.subtask-content {
+
+ /* Закругленные углы */
+  font-size: 14px;
+  font-weight: bold;
+  color: #333;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+ /* Легкая тень */
+}
+
+/* Эффект при наведении на подзадачу */
+
+.subtask.completed .subtask-content {
+  text-decoration: line-through;
+  opacity: 0.5; /* Полупрозрачный текст */
+}
+.subtask .subtask-content {
+  flex-grow: 1;
+  font-size: 16px;
+  transition: all 0.3s ease;
+}
+/* Контейнер для действий подзадачи */
+.subtask-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px; /* Отступ между кнопками */
+  justify-content: flex-end; /* Кнопки выровнены по правому краю */
+  flex-grow: 1; /* Подзадача занимает доступное пространство */
+}
+
+/* Кнопка чекбокса */
+.complete-checkbox {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  accent-color: #0cf520; /* Цвет для чекбокса */
+}
+
+/* Стиль кнопок редактирования и удаления */
+.subtask-actions button {
+  background-color: #121212; /* Темный фон для кнопок */
+  border: none;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%; /* Круглая форма кнопок */
+  color: #fff;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+.subtask-actions button:hover {
+  background-color: #313131; /* Неоновый серый цвет */
+}
+
+.subtask-actions button i {
+  font-size: 16px; /* Иконки имеют меньший размер */
+}
+
+.subtask-actions .edit-btn-sub {
+  background-color: #ffffff;
+  color: #121212 /* Оранжевый для кнопки редактирования */
+}
+
+.subtask-actions .delete-btn-sub {
+  background-color: #ffffff; /* Красный для кнопки удаления */
+  color: #121212 
+}
+
+/* Стиль для контейнера подзадач */
+
+.task {
+  background-color: #ffffff; /* Белый фон */
+  border-radius: 12px; /* Закругленные углы */
+  padding: 1px;
+  margin-bottom: 10px; /* Отступы между задачами */
+  font-family: 'Roboto', sans-serif;
+  color: #333; /* Темный текст */
+  display: flex;
+  flex-direction: column; /* Отступ между блоками */
+  transition: transform 0.3s ease;
+}
+
+/* Эффект при наведении */
+.task:hover {
+  transform: translateY(-3px); /* Легкое приподнятие */
+  border-radius: 12px;
+}
+
+/* Стиль для обычной задачи */
+.task.default {
+  background-color: #ffffff; /* Светло-серый фон для обычной задачи */
+  border-left: 6px solid #ffffff; /* Зеленая полоска слева */
+}
+
+.task.default .task-header {
+  font-weight: bold;
+  color: #121212;
+}
+
+/* Стиль для завершенной задачи */
+.task.completed {
+  background-color: #ffffff; /* Легкий зеленый фон */
+  border-left: 6px solid #0cf520; /* Зеленая полоска для завершенной задачи */
+  text-decoration: line-through; /* Перечеркнутый текст */
+  color: #7e7e7e; /* Серый текст */
+}
+
+.task.completed .task-header {
+  color: #7e7e7e; /* Цвет заголовка для завершенной задачи */
+}
+
+/* Стиль для отмененной задачи */
+.task.canceled {
+  background-color: #ffffff; /* Светло-красный фон */
+  border-left: 6px solid #e74c3c; /* Красная полоска для отмененной задачи */
+  text-decoration: line-through; /* Перечеркнутый текст */
+  color: #7e7e7e; /* Серый текст */
+}
+
+.task.canceled .task-header {
+  color: #e74c3c; /* Красный цвет для заголовка отмененной задачи */
+}
+
+/* Шрифт и стили для заголовков */
+.task-header {
+  font-family: 'Unbounded', sans-serif;
+  font-size: 16px;
+  font-weight: bold;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Основной текст задачи */
+.task-description {
+  font-size: 12px;
+  color: #7e7e7e;
+  background-color: #ffffff;
+  border: 1px dashed #cfcfcf;
+  border-radius: 12px;
+  padding: 8px;
+  margin-top: 8px;
+  line-height: 1.5;
+}
+
+/* Подписи и футер */
+.task-footer {
+  font-size: 12px;
+  color: #777;
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 10px;
 }
