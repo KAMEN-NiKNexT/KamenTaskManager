@@ -13,8 +13,13 @@ body {
 }
 
 /* Header */
-header {
+.heder-main-control {
   display: flex;
+  justify-content: space-between;
+  align-items: center;
+  /*margin-bottom: 2rem;*/
+}
+header {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 1rem;
@@ -421,3 +426,42 @@ header button:hover {
 .task.completed .delete-btn-sub:hover, .task.canceled .delete-btn-sub:hover{
   background-color: transparent;
 }
+
+.tabs-container {
+  display: flex;
+  overflow-x: auto; /* Горизонтальный скролл */
+  gap: 20px; /* Отступ между табами */
+  padding: 5px 0; /* Отступы сверху и снизу */
+  overflow-x: scroll; /* Прокрутка по горизонтали */
+  -ms-overflow-style: none;  /* Для Internet Explorer 10+ */
+  scrollbar-width: none; /* Для Firefox */
+}
+
+.tabs-container::-webkit-scrollbar {
+  display: none; /* Для Chrome, Safari и Opera */
+}
+
+.tab {
+  flex-shrink: 0; /* Запрещаем сжатие кнопок */
+  padding: 8px 8px;
+  background-color: #ffffff;
+  color: #0a0a0a;
+  border: 1px solid #0a0a0a;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  white-space: nowrap; /* Запрещает перенос текста */
+}
+
+.tab:hover {
+  background-color: #e0e0e0;
+}
+
+.active-tab {
+  background-color: #007bff;
+  color: #fff;
+  border-color: #007bff;
+}
+
+
+

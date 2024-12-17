@@ -125,10 +125,60 @@ function createSubtaskElement(task, subtask) {
 function saveTasks() {
     localStorage.setItem("tasks", JSON.stringify(tasks));
 }
-// Рендеринг задач
+var tabsContainer = document.querySelector('.tabs-container');
+var isDragging = false;
+var startX;
+var scrollLeft;
+tabsContainer.addEventListener('mousedown', function (e) {
+    isDragging = true;
+    startX = e.pageX - tabsContainer.offsetLeft;
+    scrollLeft = tabsContainer.scrollLeft;
+    tabsContainer.style.cursor = 'grabbing'; // Курсор меняется на "схватить"
+});
+tabsContainer.addEventListener('mouseleave', function () {
+    isDragging = false;
+    tabsContainer.style.cursor = 'grab'; // Курсор меняется обратно на "схватить"
+});
+tabsContainer.addEventListener('mouseup', function () {
+    isDragging = false;
+    tabsContainer.style.cursor = 'grab'; // Курсор меняется обратно на "схватить"
+});
+tabsContainer.addEventListener('mousemove', function (e) {
+    if (!isDragging)
+        return; // Если не перетаскиваем, ничего не делаем
+    e.preventDefault(); // Останавливаем стандартный скроллинг
+    var x = e.pageX - tabsContainer.offsetLeft; // Текущая позиция мыши
+    var walk = (x - startX) * 2; // Скорость прокрутки
+    tabsContainer.scrollLeft = scrollLeft - walk; // Прокручиваем влево/вправ
+});
+var tabs = document.querySelectorAll('.tab');
+var currentFilter = "all"; // Глобальная переменная для хранения текущего фильтра
+tabs.forEach(function (tab) {
+    tab.addEventListener('click', function () {
+        // Убираем активный класс у всех табов
+        tabs.forEach(function (t) { return t.classList.remove('active-tab'); });
+        tab.classList.add('active-tab');
+        // Обновляем текущий фильтр из атрибута data-tab
+        currentFilter = tab.getAttribute('data-tab') || "all";
+        // Перерисовываем задачи
+        renderTasks();
+    });
+});
 function renderTasks() {
-    taskContainer.innerHTML = "";
-    tasks.forEach(function (task) {
+    taskContainer.innerHTML = ""; // Очищаем контейнер
+    var filteredTasks = tasks.filter(function (task) {
+        switch (currentFilter) {
+            case "active":
+                return task.state === "default";
+            case "completed":
+                return task.state === "completed";
+            case "canceled":
+                return task.state === "canceled";
+            default:
+                return true; // По умолчанию возвращаем все задачи
+        }
+    });
+    filteredTasks.forEach(function (task) {
         taskContainer.appendChild(createTaskElement(task));
     });
 }

@@ -13,8 +13,16 @@
 <body>
   <div id="app">
     <header>
-      <h1>Task Manager</h1>
-      <button id="add-task-btn">Create Task</button>
+      <div class = "heder-main-control">
+        <h1>Task Manager</h1>
+        <button id="add-task-btn">Create Task</button><br>
+      </div>
+      <div class="tabs-container">
+        <button class="tab active-tab" data-tab="all">Все</button>
+        <button class="tab" data-tab="active">Активные</button>
+        <button class="tab" data-tab="completed">Выполненные</button>
+        <button class="tab" data-tab="canceled">Отменённые</button>
+      </div>    
     </header>
 
     <main>

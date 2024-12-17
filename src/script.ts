@@ -164,13 +164,75 @@ function saveTasks() {
   localStorage.setItem("tasks", JSON.stringify(tasks));
 }
 
-// Рендеринг задач
+const tabsContainer = document.querySelector('.tabs-container') as HTMLElement;
+let isDragging = false;
+let startX: number;
+let scrollLeft: number;
+
+tabsContainer.addEventListener('mousedown', (e) => {
+  isDragging = true;
+  startX = e.pageX - tabsContainer.offsetLeft;
+  scrollLeft = tabsContainer.scrollLeft;
+  tabsContainer.style.cursor = 'grabbing'; // Курсор меняется на "схватить"
+});
+
+tabsContainer.addEventListener('mouseleave', () => {
+  isDragging = false;
+  tabsContainer.style.cursor = 'grab'; // Курсор меняется обратно на "схватить"
+});
+
+tabsContainer.addEventListener('mouseup', () => {
+  isDragging = false;
+  tabsContainer.style.cursor = 'grab'; // Курсор меняется обратно на "схватить"
+});
+
+tabsContainer.addEventListener('mousemove', (e) => {
+  if (!isDragging) return; // Если не перетаскиваем, ничего не делаем
+  e.preventDefault(); // Останавливаем стандартный скроллинг
+  const x = e.pageX - tabsContainer.offsetLeft; // Текущая позиция мыши
+  const walk = (x - startX) * 2; // Скорость прокрутки
+  tabsContainer.scrollLeft = scrollLeft - walk; // Прокручиваем влево/вправ
+});
+
+
+const tabs = document.querySelectorAll('.tab');
+let currentFilter: string = "all"; // Глобальная переменная для хранения текущего фильтра
+
+tabs.forEach(tab => {
+  tab.addEventListener('click', () => {
+    // Убираем активный класс у всех табов
+    tabs.forEach(t => t.classList.remove('active-tab'));
+    tab.classList.add('active-tab');
+
+    // Обновляем текущий фильтр из атрибута data-tab
+    currentFilter = tab.getAttribute('data-tab') || "all";
+
+    // Перерисовываем задачи
+    renderTasks();
+  });
+});
+
 function renderTasks() {
-  taskContainer.innerHTML = "";
-  tasks.forEach((task) => {
+  taskContainer.innerHTML = ""; // Очищаем контейнер
+
+  const filteredTasks = tasks.filter(task => {
+    switch (currentFilter) {
+      case "active":
+        return task.state === "default";
+      case "completed":
+        return task.state === "completed";
+      case "canceled":
+        return task.state === "canceled";
+      default:
+        return true; // По умолчанию возвращаем все задачи
+    }
+  });
+
+  filteredTasks.forEach(task => {
     taskContainer.appendChild(createTaskElement(task));
   });
 }
+
 // Завершить задачу
 
 function markAsCompleted(task: Task) {
