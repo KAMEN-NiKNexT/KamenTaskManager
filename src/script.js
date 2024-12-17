@@ -28,29 +28,32 @@ function closeEditPopup() {
 }
 // Добавление задачи
 form.addEventListener("submit", function (e) {
-    e.preventDefault();
-    var name = document.getElementById("task-name").value.trim();
-    var importance = parseInt(document.getElementById("task-importance").value, 10);
-    var description = document.getElementById("task-description").value.trim();
-    var deadline = document.getElementById("task-deadline").value;
-    if (!name || isNaN(importance) || importance < 1 || importance > 5) {
-        alert("Please fill out all required fields correctly.");
-        return;
-    }
+    createTask(e);
+});
+// Функция создания задачи
+function createTask(event) {
+    event.preventDefault();
+    var taskName = document.querySelector("#task-name").value;
+    var taskImportance = parseInt(document.querySelector("#task-importance").value);
+    var taskDescription = document.querySelector("#task-description").value;
+    var taskDeadline = document.querySelector("#task-deadline").value;
+    var taskCategory = document.querySelector("#task-category").value;
+    // Создаём новую задачу
     var newTask = {
         id: crypto.randomUUID(),
-        name: name,
-        importance: importance,
-        description: description,
-        deadline: deadline,
-        subtasks: [],
+        name: taskName,
+        importance: taskImportance,
+        description: taskDescription,
+        deadline: taskDeadline,
         state: "default",
+        category: taskCategory, // Категория задачи
+        subtasks: []
     };
-    tasks.push(newTask);
-    saveTasks();
-    renderTasks();
-    closePopup();
-});
+    tasks.push(newTask); // Добавляем задачу в массив задач
+    saveTasks(); // Сохраняем задачи
+    renderTasks(); // Перерисовываем задачи
+    closePopup(); // Закрываем попап
+}
 function addSubtask(task, subtaskName) {
     var newSubtask = {
         id: generateUniqueId(), // Уникальный идентификатор подзадачи
@@ -151,33 +154,35 @@ tabsContainer.addEventListener('mousemove', function (e) {
     var walk = (x - startX) * 2; // Скорость прокрутки
     tabsContainer.scrollLeft = scrollLeft - walk; // Прокручиваем влево/вправ
 });
+var categoryFilter = document.querySelector("#category-filter");
+var currentStateFilter = "all"; // Глобальная переменная для хранения текущего фильтра состояния
+var currentCategoryFilter = "all"; // Глобальная переменная для хранения текущего фильтра категории
+// Обработчик для фильтра по состоянию задачи
 var tabs = document.querySelectorAll('.tab');
-var currentFilter = "all"; // Глобальная переменная для хранения текущего фильтра
 tabs.forEach(function (tab) {
     tab.addEventListener('click', function () {
-        // Убираем активный класс у всех табов
         tabs.forEach(function (t) { return t.classList.remove('active-tab'); });
         tab.classList.add('active-tab');
-        // Обновляем текущий фильтр из атрибута data-tab
-        currentFilter = tab.getAttribute('data-tab') || "all";
-        // Перерисовываем задачи
-        renderTasks();
+        currentStateFilter = tab.getAttribute('data-tab') || "all"; // Обновляем фильтр состояния
+        renderTasks(); // Перерисовываем задачи с учетом нового фильтра
     });
+});
+// Обработчик для фильтра по категориям
+categoryFilter.addEventListener('change', function () {
+    currentCategoryFilter = categoryFilter.value; // Обновляем фильтр категории
+    renderTasks(); // Перерисовываем задачи с учетом нового фильтра
 });
 function renderTasks() {
     taskContainer.innerHTML = ""; // Очищаем контейнер
+    // Фильтрация задач по состоянию и категории
     var filteredTasks = tasks.filter(function (task) {
-        switch (currentFilter) {
-            case "active":
-                return task.state === "default";
-            case "completed":
-                return task.state === "completed";
-            case "canceled":
-                return task.state === "canceled";
-            default:
-                return true; // По умолчанию возвращаем все задачи
-        }
+        // Фильтрация по состоянию задачи
+        var stateFilter = (currentStateFilter === "all" || task.state === currentStateFilter);
+        // Фильтрация по категории задачи
+        var categoryFilter = (currentCategoryFilter === "all" || task.category === currentCategoryFilter);
+        return stateFilter && categoryFilter;
     });
+    // Отображаем отфильтрованные задачи
     filteredTasks.forEach(function (task) {
         taskContainer.appendChild(createTaskElement(task));
     });
@@ -205,7 +210,7 @@ function createTaskElement(task) {
     var taskEl = document.createElement("div");
     taskEl.className = "task ".concat(task.state);
     taskEl.draggable = true;
-    taskEl.innerHTML = "\n    <div>\n      <strong>".concat(task.name, "</strong> (Importance: ").concat(task.importance, ")\n    </div>\n    <div>").concat(task.description || "", "</div>\n    <div>").concat(task.deadline || "", "</div>\n    <button class=\"edit-btn-task\"><i class=\"fas fa-edit\"></i></button> <!-- \u041A\u043D\u043E\u043F\u043A\u0430 \u0440\u0435\u0434\u0430\u043A\u0442\u0438\u0440\u043E\u0432\u0430\u043D\u0438\u044F \u0437\u0430\u0434\u0430\u0447\u0438 -->\n    <button class=\"add-subtask-btn\">+</button>\n    <div class=\"subtasks-container\"></div>\n  ");
+    taskEl.innerHTML = "\n  <div>\n    <strong>".concat(task.name, "</strong> (Importance: ").concat(task.importance, ")\n  </div>\n  <div>Category: ").concat(task.category, "</div> <!-- \u041E\u0442\u043E\u0431\u0440\u0430\u0436\u0430\u0435\u043C \u043A\u0430\u0442\u0435\u0433\u043E\u0440\u0438\u044E -->\n  <div>").concat(task.description || "", "</div>\n  <div>").concat(task.deadline || "", "</div>\n  <button class=\"edit-btn-task\"><i class=\"fas fa-edit\"></i></button> <!-- \u041A\u043D\u043E\u043F\u043A\u0430 \u0440\u0435\u0434\u0430\u043A\u0442\u0438\u0440\u043E\u0432\u0430\u043D\u0438\u044F \u0437\u0430\u0434\u0430\u0447\u0438 -->\n  <button class=\"add-subtask-btn\">+</button>\n  <div class=\"subtasks-container\"></div>\n");
     var subtasksContainer = taskEl.querySelector(".subtasks-container");
     var editButton = taskEl.querySelector('.edit-btn-task');
     // Обработчик кнопки редактирования задачи
@@ -216,16 +221,6 @@ function createTaskElement(task) {
     task.subtasks.forEach(function (subtask) {
         subtasksContainer.appendChild(createSubtaskElement(task, subtask));
     });
-    // Обработчик кнопки редактирования задачи
-    //editButton.addEventListener("click", () => {
-    //  const newTaskName = prompt("Введите новое название задачи:", task.name);
-    //  if (newTaskName && newTaskName.trim() !== "") {
-    //    task.name = newTaskName.trim(); // Обновляем название задачи
-    //    taskEl.querySelector("strong")!.textContent = newTaskName.trim(); // Обновляем текст задачи
-    //    saveTasks();
-    //    renderTasks();
-    //  }
-    //});
     taskEl.addEventListener("dragstart", function (e) {
         var _a;
         taskEl.classList.add("dragging");
@@ -249,7 +244,7 @@ function createTaskElement(task) {
     var buttons = document.createElement("div");
     buttons.className = "task-buttons";
     buttons.innerHTML = "\n    <button class=\"complete-btn\">\u0412\u044B\u043F\u043E\u043B\u043D\u0435\u043D\u043E</button>\n    <button class=\"cancel-btn\">\u041E\u0442\u043C\u0435\u043D\u0438\u0442\u044C</button>\n    <button class=\"delete-btn\">\n      <i class=\"fas fa-trash\"></i> <!-- \u0418\u043A\u043E\u043D\u043A\u0430 \u043C\u0443\u0441\u043E\u0440\u043A\u0438 -->\n    </button>";
-    // Обработчик кнопки "Выполнено"
+    // Обработчики кнопок
     (_a = buttons.querySelector(".complete-btn")) === null || _a === void 0 ? void 0 : _a.addEventListener("click", function () {
         var taskToComplete = tasks.find(function (t) { return t.id === task.id; });
         if (taskToComplete) {
@@ -377,6 +372,7 @@ function openEditTaskPopup(task) {
     document.getElementById('edit_task-description').value = task.description || '';
     document.getElementById('edit_task-importance').value = task.importance.toString();
     document.getElementById('edit_task-deadline').value = task.deadline || '';
+    document.getElementById('edit_task-category').value = task.category || 'none';
     // Открываем попап
     (_a = document.getElementById('edit_popup')) === null || _a === void 0 ? void 0 : _a.classList.remove('hidden');
 }
@@ -391,6 +387,7 @@ function saveTaskEdits() {
         task.description = document.getElementById('edit_task-description').value;
         task.importance = parseInt(document.getElementById('edit_task-importance').value);
         task.deadline = document.getElementById('edit_task-deadline').value;
+        task.category = document.getElementById('edit_task-category').value;
         // Сохраняем задачи
         saveTasks();
         renderTasks();

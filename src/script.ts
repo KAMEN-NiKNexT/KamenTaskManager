@@ -10,8 +10,9 @@ interface Task {
   importance: number;
   description?: string;
   deadline?: string;
-  subtasks: Subtask[];
   state: "default" | "completed" | "canceled";
+  category: string;  // Новое поле для категории
+  subtasks: Subtask[];
 }
 
 const taskContainer = document.getElementById("task-container")!;
@@ -46,33 +47,37 @@ function closeEditPopup() {
 
 // Добавление задачи
 form.addEventListener("submit", (e) => {
-  e.preventDefault();
+  createTask(e);
+});
+// Функция создания задачи
+function createTask(event: Event) {
+  event.preventDefault();
 
-  const name = (document.getElementById("task-name") as HTMLInputElement).value.trim();
-  const importance = parseInt((document.getElementById("task-importance") as HTMLInputElement).value, 10);
-  const description = (document.getElementById("task-description") as HTMLTextAreaElement).value.trim();
-  const deadline = (document.getElementById("task-deadline") as HTMLInputElement).value;
+  const taskName = (document.querySelector("#task-name") as HTMLInputElement).value;
+  const taskImportance = parseInt((document.querySelector("#task-importance") as HTMLInputElement).value);
+  const taskDescription = (document.querySelector("#task-description") as HTMLTextAreaElement).value;
+  const taskDeadline = (document.querySelector("#task-deadline") as HTMLInputElement).value;
+  const taskCategory = (document.querySelector("#task-category") as HTMLSelectElement).value;
 
-  if (!name || isNaN(importance) || importance < 1 || importance > 5) {
-    alert("Please fill out all required fields correctly.");
-    return;
-  }
-
+  // Создаём новую задачу
   const newTask: Task = {
     id: crypto.randomUUID(),
-    name,
-    importance,
-    description,
-    deadline,
-    subtasks: [],
+    name: taskName,
+    importance: taskImportance,
+    description: taskDescription,
+    deadline: taskDeadline,
     state: "default",
+    category: taskCategory,  // Категория задачи
+    subtasks: []
   };
 
-  tasks.push(newTask);
-  saveTasks();
-  renderTasks();
-  closePopup();
-});
+  tasks.push(newTask); // Добавляем задачу в массив задач
+  saveTasks();  // Сохраняем задачи
+  renderTasks();  // Перерисовываем задачи
+
+  closePopup(); // Закрываем попап
+}
+
 
 function addSubtask(task: Task, subtaskName: string) {
   const newSubtask: Subtask = {
@@ -195,44 +200,48 @@ tabsContainer.addEventListener('mousemove', (e) => {
 });
 
 
-const tabs = document.querySelectorAll('.tab');
-let currentFilter: string = "all"; // Глобальная переменная для хранения текущего фильтра
+const categoryFilter = document.querySelector("#category-filter") as HTMLSelectElement;
 
+let currentStateFilter: string = "all"; // Глобальная переменная для хранения текущего фильтра состояния
+let currentCategoryFilter: string = "all"; // Глобальная переменная для хранения текущего фильтра категории
+
+// Обработчик для фильтра по состоянию задачи
+const tabs = document.querySelectorAll('.tab');
 tabs.forEach(tab => {
   tab.addEventListener('click', () => {
-    // Убираем активный класс у всех табов
     tabs.forEach(t => t.classList.remove('active-tab'));
     tab.classList.add('active-tab');
-
-    // Обновляем текущий фильтр из атрибута data-tab
-    currentFilter = tab.getAttribute('data-tab') || "all";
-
-    // Перерисовываем задачи
-    renderTasks();
+    
+    currentStateFilter = tab.getAttribute('data-tab') || "all"; // Обновляем фильтр состояния
+    renderTasks(); // Перерисовываем задачи с учетом нового фильтра
   });
+});
+
+// Обработчик для фильтра по категориям
+categoryFilter.addEventListener('change', () => {
+  currentCategoryFilter = categoryFilter.value; // Обновляем фильтр категории
+  renderTasks(); // Перерисовываем задачи с учетом нового фильтра
 });
 
 function renderTasks() {
   taskContainer.innerHTML = ""; // Очищаем контейнер
 
+  // Фильтрация задач по состоянию и категории
   const filteredTasks = tasks.filter(task => {
-    switch (currentFilter) {
-      case "active":
-        return task.state === "default";
-      case "completed":
-        return task.state === "completed";
-      case "canceled":
-        return task.state === "canceled";
-      default:
-        return true; // По умолчанию возвращаем все задачи
-    }
+    // Фильтрация по состоянию задачи
+    const stateFilter = (currentStateFilter === "all" || task.state === currentStateFilter);
+    
+    // Фильтрация по категории задачи
+    const categoryFilter = (currentCategoryFilter === "all" || task.category === currentCategoryFilter);
+
+    return stateFilter && categoryFilter;
   });
 
+  // Отображаем отфильтрованные задачи
   filteredTasks.forEach(task => {
     taskContainer.appendChild(createTaskElement(task));
   });
 }
-
 // Завершить задачу
 
 function markAsCompleted(task: Task) {
@@ -257,39 +266,28 @@ function createTaskElement(task: Task): HTMLElement {
   taskEl.draggable = true;
 
   taskEl.innerHTML = `
-    <div>
-      <strong>${task.name}</strong> (Importance: ${task.importance})
-    </div>
-    <div>${task.description || ""}</div>
-    <div>${task.deadline || ""}</div>
-    <button class="edit-btn-task"><i class="fas fa-edit"></i></button> <!-- Кнопка редактирования задачи -->
-    <button class="add-subtask-btn">+</button>
-    <div class="subtasks-container"></div>
-  `;
+  <div>
+    <strong>${task.name}</strong> (Importance: ${task.importance})
+  </div>
+  <div>Category: ${task.category}</div> <!-- Отображаем категорию -->
+  <div>${task.description || ""}</div>
+  <div>${task.deadline || ""}</div>
+  <button class="edit-btn-task"><i class="fas fa-edit"></i></button> <!-- Кнопка редактирования задачи -->
+  <button class="add-subtask-btn">+</button>
+  <div class="subtasks-container"></div>
+`;
 
-  const subtasksContainer = taskEl.querySelector(".subtasks-container") as HTMLElement;
-  const editButton = taskEl.querySelector('.edit-btn-task') as HTMLButtonElement;
+const subtasksContainer = taskEl.querySelector(".subtasks-container") as HTMLElement;
+const editButton = taskEl.querySelector('.edit-btn-task') as HTMLButtonElement;
 
   // Обработчик кнопки редактирования задачи
   editButton.addEventListener('click', () => {
     openEditTaskPopup(task);
   });
-
   // Отображаем все подзадачи
   task.subtasks.forEach((subtask) => {
     subtasksContainer.appendChild(createSubtaskElement(task, subtask));
   });
-
-  // Обработчик кнопки редактирования задачи
-  //editButton.addEventListener("click", () => {
-  //  const newTaskName = prompt("Введите новое название задачи:", task.name);
-  //  if (newTaskName && newTaskName.trim() !== "") {
-  //    task.name = newTaskName.trim(); // Обновляем название задачи
-  //    taskEl.querySelector("strong")!.textContent = newTaskName.trim(); // Обновляем текст задачи
-  //    saveTasks();
-  //    renderTasks();
-  //  }
-  //});
 
   taskEl.addEventListener("dragstart", (e) => {
     taskEl.classList.add("dragging");
@@ -322,7 +320,7 @@ function createTaskElement(task: Task): HTMLElement {
       <i class="fas fa-trash"></i> <!-- Иконка мусорки -->
     </button>`;
 
-  // Обработчик кнопки "Выполнено"
+  // Обработчики кнопок
   buttons.querySelector(".complete-btn")?.addEventListener("click", () => {
     const taskToComplete = tasks.find((t) => t.id === task.id);
     if (taskToComplete) {
@@ -468,6 +466,7 @@ function openEditTaskPopup(task: Task) {
   (document.getElementById('edit_task-description') as HTMLTextAreaElement).value = task.description || '';
   (document.getElementById('edit_task-importance') as HTMLInputElement).value = task.importance.toString();
   (document.getElementById('edit_task-deadline') as HTMLInputElement).value = task.deadline || '';
+  (document.getElementById('edit_task-category') as HTMLSelectElement).value = task.category || 'none';
   
   // Открываем попап
   document.getElementById('edit_popup')?.classList.remove('hidden');
@@ -486,6 +485,7 @@ function saveTaskEdits() {
     task.description = (document.getElementById('edit_task-description') as HTMLTextAreaElement).value;
     task.importance = parseInt((document.getElementById('edit_task-importance') as HTMLInputElement).value);
     task.deadline = (document.getElementById('edit_task-deadline') as HTMLInputElement).value;
+    task.category = (document.getElementById('edit_task-category') as HTMLSelectElement).value;
 
     // Сохраняем задачи
     saveTasks();
