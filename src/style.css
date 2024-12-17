@@ -1,18 +1,4 @@
-/* General Styles */
-body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  background: #f4f4f9;
-  color: #333;
-}
 
-#app {
-  max-width: 600px;
-  margin: 0 auto;
-  padding: 1rem;
-}
-
-/* Header */
 .heder-main-control {
   display: flex;
   justify-content: space-between;
@@ -23,11 +9,6 @@ header {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 1rem;
-}
-
-header h1 {
-  font-size: 1.5rem;
-  margin: 0;
 }
 
 header button {
@@ -465,3 +446,115 @@ header button:hover {
 
 
 
+body {
+  max-width: 360px;
+  padding: 1rem; /* Уменьшаем отступы */
+  margin: 0 auto; /* Центрируем содержимое, без внешнего отступа */
+  background-color: #121212; /* Черный фон */
+  color: #ffffff; /* Белый цвет текста для контраста */
+  font-family: 'Unbounded', sans-serif;
+}
+.header {
+  width: 340;
+  background-color: #fff; /* Белый фон для хедера */
+  padding: 10px; /* Отступы внутри хедера */
+  border-radius: 12px; /* Легкое закругление */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 70px; /* Устанавливаем высоту хедера */
+  margin-bottom: 5px;
+}
+
+.header h1 {
+  font-family: 'Unbounded', sans-serif;
+  font-size: 14px; /* Размер шрифта */
+  color: #121212; /* Черный цвет для заголовка */
+  margin: 0; /* Убираем отступы */
+}
+
+.tabs-container {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  height: 100%; /* Забирает всю высоту родительского элемента */
+  justify-content: space-between;
+  user-select: none;
+  overflow: hidden;
+}
+
+/* Стиль для табов */
+.tab {
+  font-family: 'Unbounded', sans-serif;
+  background-color: #121212;
+  color: #ffffff;
+  border-radius: 9px;
+  border: 0px;
+  padding: 12px 10px;
+  text-align: center;
+  width: 130px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  font-size: 12px;
+}
+
+.tab:hover {
+  background-color: #202020;
+}
+
+.active-tab {
+  background-color: #0cf520;
+  color: white;
+}
+
+.active-tab:hover{
+  background-color: #19db29;
+}
+
+.tab:focus {
+  outline: none;
+}
+
+
+/* Основной стиль для кнопки */
+#add-task-btn {
+  width: 100%; /* Растягиваем кнопку на всю ширину экрана */
+  background-color: #0cf520; /* Ярко-зеленый фон кнопки */
+  color: #ffffff; /* Белый цвет текста */
+  border: none; /* Без рамки */
+  border-radius: 12px; /* Легкое закругление */
+  padding: 12px 24px; /* Отступы внутри кнопки */
+  font-family: 'Unbounded', sans-serif; /* Шрифт для кнопки */
+  font-size: 18px; /* Размер шрифта */
+  cursor: pointer; /* Курсор при наведении */
+  transition: all 0.3s ease; /* Плавная анимация при изменении */
+  box-shadow: 0 4px 12px rgba(0, 255, 0, 0.3); /* Легкое свечение вокруг кнопки */
+}
+
+/* Стиль кнопки при наведении */
+#add-task-btn:hover {
+  background-color: #0cf520; /* Ярко-зеленый фон при наведении */
+  box-shadow: 0 0 20px #00ff00b3; /* Увеличенное свечение */
+}
+
+/* Стиль кнопки при нажатии */
+#add-task-btn:active {
+  background-color: #19db29; /* Еще более яркий зеленый при нажатии */
+  box-shadow: 0 0 40px rgba(0, 255, 0, 0.9); /* Сильное свечение при нажатии */
+}
+
+/* Стиль для текста на кнопке */
+#add-task-btn span {
+  font-weight: bold; /* Жирный текст */
+}
+
+/* Дополнительный эффект свечения */
+@keyframes glowing {
+  0% { box-shadow: 0 0 5px #0cf520, 0 0 10px #0cf520, 0 0 15px #0cf520; }
+  50% { box-shadow: 0 0 20px #0cf520, 0 0 30px #0cf520, 0 0 40px #0cf520; }
+  100% { box-shadow: 0 0 5px #0cf520, 0 0 10px #0cf520, 0 0 15px #0cf520; }
+}
+
+#add-task-btn:hover {
+  animation: glowing 1.5s ease-in-out infinite; /* Анимация свечения при наведении */
+}

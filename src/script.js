@@ -130,29 +130,48 @@ function saveTasks() {
 }
 var tabsContainer = document.querySelector('.tabs-container');
 var isDragging = false;
-var startX;
-var scrollLeft;
+var startY;
+var scrollTop;
+var blockClick = false; // Флаг для блокировки кликов во время перетаскивания
+// Отключаем выделение текста
+tabsContainer.style.userSelect = 'none';
+// Начало перетаскивания
 tabsContainer.addEventListener('mousedown', function (e) {
+    // Флаг блокировки кликов активируется только если начался drag
     isDragging = true;
-    startX = e.pageX - tabsContainer.offsetLeft;
-    scrollLeft = tabsContainer.scrollLeft;
+    startY = e.pageY - tabsContainer.offsetTop; // Начальная позиция по вертикали
+    scrollTop = tabsContainer.scrollTop; // Текущая прокрутка
     tabsContainer.style.cursor = 'grabbing'; // Курсор меняется на "схватить"
+    // Только если началось перетаскивание, блокируем клики
+    blockClick = false;
+    setTimeout(function () {
+        if (isDragging) {
+            blockClick = true; // Блокируем клики, если это был drag
+        }
+    }, 100); // Задержка, чтобы пользователь мог кликнуть по кнопке до того как начнется перетаскивание
 });
+// Выход из области перетаскивания
 tabsContainer.addEventListener('mouseleave', function () {
     isDragging = false;
     tabsContainer.style.cursor = 'grab'; // Курсор меняется обратно на "схватить"
+    blockClick = false; // Разблокируем клики
 });
+// Завершение перетаскивания
 tabsContainer.addEventListener('mouseup', function () {
     isDragging = false;
     tabsContainer.style.cursor = 'grab'; // Курсор меняется обратно на "схватить"
+    setTimeout(function () {
+        blockClick = false; // Разблокируем клики через небольшую задержку (150 мс)
+    }, 100); // 150 миллисекунд
 });
+// Перетаскивание
 tabsContainer.addEventListener('mousemove', function (e) {
     if (!isDragging)
         return; // Если не перетаскиваем, ничего не делаем
     e.preventDefault(); // Останавливаем стандартный скроллинг
-    var x = e.pageX - tabsContainer.offsetLeft; // Текущая позиция мыши
-    var walk = (x - startX) * 2; // Скорость прокрутки
-    tabsContainer.scrollLeft = scrollLeft - walk; // Прокручиваем влево/вправ
+    var y = e.pageY - tabsContainer.offsetTop; // Текущая позиция мыши по вертикали
+    var walk = (y - startY); // Скорость прокрутки
+    tabsContainer.scrollTop = scrollTop - walk; // Прокручиваем вверх/вниз
 });
 var categoryFilter = document.querySelector("#category-filter");
 var currentStateFilter = "all"; // Глобальная переменная для хранения текущего фильтра состояния
@@ -161,10 +180,12 @@ var currentCategoryFilter = "all"; // Глобальная переменная 
 var tabs = document.querySelectorAll('.tab');
 tabs.forEach(function (tab) {
     tab.addEventListener('click', function () {
-        tabs.forEach(function (t) { return t.classList.remove('active-tab'); });
-        tab.classList.add('active-tab');
-        currentStateFilter = tab.getAttribute('data-tab') || "all"; // Обновляем фильтр состояния
-        renderTasks(); // Перерисовываем задачи с учетом нового фильтра
+        if (!blockClick) { // Проверяем, не в состоянии перетаскивания ли мы
+            tabs.forEach(function (t) { return t.classList.remove('active-tab'); });
+            tab.classList.add('active-tab');
+            currentStateFilter = tab.getAttribute('data-tab') || "all"; // Обновляем фильтр состояния
+            renderTasks(); // Перерисовываем задачи с учетом нового фильтра
+        }
     });
 });
 // Обработчик для фильтра по категориям

@@ -171,34 +171,54 @@ function saveTasks() {
 
 const tabsContainer = document.querySelector('.tabs-container') as HTMLElement;
 let isDragging = false;
-let startX: number;
-let scrollLeft: number;
+let startY: number;
+let scrollTop: number;
+let blockClick = false; // Флаг для блокировки кликов во время перетаскивания
 
+// Отключаем выделение текста
+tabsContainer.style.userSelect = 'none';
+
+// Начало перетаскивания
 tabsContainer.addEventListener('mousedown', (e) => {
+  // Флаг блокировки кликов активируется только если начался drag
   isDragging = true;
-  startX = e.pageX - tabsContainer.offsetLeft;
-  scrollLeft = tabsContainer.scrollLeft;
+  startY = e.pageY - tabsContainer.offsetTop; // Начальная позиция по вертикали
+  scrollTop = tabsContainer.scrollTop; // Текущая прокрутка
   tabsContainer.style.cursor = 'grabbing'; // Курсор меняется на "схватить"
+
+  // Только если началось перетаскивание, блокируем клики
+  blockClick = false;
+  setTimeout(() => {
+    if (isDragging) {
+      blockClick = true; // Блокируем клики, если это был drag
+    }
+  }, 100); // Задержка, чтобы пользователь мог кликнуть по кнопке до того как начнется перетаскивание
 });
 
+// Выход из области перетаскивания
 tabsContainer.addEventListener('mouseleave', () => {
   isDragging = false;
   tabsContainer.style.cursor = 'grab'; // Курсор меняется обратно на "схватить"
+  blockClick = false; // Разблокируем клики
 });
 
+// Завершение перетаскивания
 tabsContainer.addEventListener('mouseup', () => {
   isDragging = false;
   tabsContainer.style.cursor = 'grab'; // Курсор меняется обратно на "схватить"
+  setTimeout(() => {
+    blockClick = false; // Разблокируем клики через небольшую задержку (150 мс)
+  }, 100); // 150 миллисекунд
 });
 
+// Перетаскивание
 tabsContainer.addEventListener('mousemove', (e) => {
   if (!isDragging) return; // Если не перетаскиваем, ничего не делаем
   e.preventDefault(); // Останавливаем стандартный скроллинг
-  const x = e.pageX - tabsContainer.offsetLeft; // Текущая позиция мыши
-  const walk = (x - startX) * 2; // Скорость прокрутки
-  tabsContainer.scrollLeft = scrollLeft - walk; // Прокручиваем влево/вправ
+  const y = e.pageY - tabsContainer.offsetTop; // Текущая позиция мыши по вертикали
+  const walk = (y - startY); // Скорость прокрутки
+  tabsContainer.scrollTop = scrollTop - walk; // Прокручиваем вверх/вниз
 });
-
 
 const categoryFilter = document.querySelector("#category-filter") as HTMLSelectElement;
 
@@ -209,11 +229,12 @@ let currentCategoryFilter: string = "all"; // Глобальная переме�
 const tabs = document.querySelectorAll('.tab');
 tabs.forEach(tab => {
   tab.addEventListener('click', () => {
-    tabs.forEach(t => t.classList.remove('active-tab'));
-    tab.classList.add('active-tab');
-    
-    currentStateFilter = tab.getAttribute('data-tab') || "all"; // Обновляем фильтр состояния
-    renderTasks(); // Перерисовываем задачи с учетом нового фильтра
+    if (!blockClick) { // Проверяем, не в состоянии перетаскивания ли мы
+      tabs.forEach(t => t.classList.remove('active-tab'));
+      tab.classList.add('active-tab');
+      currentStateFilter = tab.getAttribute('data-tab') || "all"; // Обновляем фильтр состояния
+      renderTasks(); // Перерисовываем задачи с учетом нового фильтра
+    }
   });
 });
 

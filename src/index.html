@@ -8,24 +8,22 @@
   <link
   href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
   rel="stylesheet"
-/>
+  />
+  <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600&display=swap" rel="stylesheet">
 </head>
-<body>
-  <div id="app">
-    <header>
-      <div class = "heder-main-control">
-        <h1>Task Manager</h1>
-        <button id="add-task-btn">Create Task</button><br>
-      </div>
-      <div class="tabs-container">
-        <button class="tab active-tab" data-tab="all">Все</button>
-        <button class="tab" data-tab="default">Активные</button>
-        <button class="tab" data-tab="completed">Выполненные</button>
-        <button class="tab" data-tab="canceled">Отменённые</button>
-      </div>    
-    </header>
-
-    <main>
+<body style = "color:black">
+  <header class="header">
+    <h1>Начни планировать <br> вместе с нами</h1>
+    <div class="tabs-container">
+      <button class="tab active-tab" data-tab="all">Все</button>
+      <button class="tab" data-tab="default">Активные</button>
+      <button class="tab" data-tab="completed">Выполненные</button>
+      <button class="tab" data-tab="canceled">Отменённые</button>
+    </div>
+  </header>
+  <main>
+    <button id="add-task-btn">Создать задачу</button><br><br>
+    <div class = "task-list-objects">
       <label for="category-filter">Filter Tasks</label>
       <select id="category-filter">
         <option value="all">All Tasks</option>
@@ -35,7 +33,13 @@
         <option value="family">Family</option>
       </select>
       <div id="task-container"></div>
-    </main>
+    </div>
+  </main>
+  <div id="app">
+    
+    
+
+   
 
     <!-- Popup -->
     <div id="popup" class="hidden">
