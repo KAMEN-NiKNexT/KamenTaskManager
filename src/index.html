@@ -49,23 +49,23 @@
         <h2>Создать задачу</h2>
         <form id="task-form">
           <label for="task-name">Название *</label>
-          <input type="text" id="task-name" placeholder="Enter task name" required />
+          <input type="text" id="task-name" placeholder="Введите название" required />
 
           <label for="task-importance">Приоритет (1-5) *</label>
-          <input type="number" id="task-importance" min="1" max="5" placeholder="Enter importance level" required />
+          <input type="number" id="task-importance" min="1" max="5" placeholder="Введите приоритет" required />
 
           <label for="task-category">Категория *</label>
           <select id="task-category" required>
-            <option value="none">Нет</option>
-            <option value="health">Здоровье</option>
-            <option value="work">Работа</option>
-            <option value="study">Учёба</option>
-            <option value="family">Семья</option>
+            <option value="Нет">Нет</option>
+            <option value="Здоровье">Здоровье</option>
+            <option value="Работа">Работа</option>
+            <option value="Учёба">Учёба</option>
+            <option value="Семья">Семья</option>
             <!-- Здесь можно добавлять другие категории -->
           </select>
 
           <label for="task-description">Описание</label>
-          <textarea id="task-description" placeholder="Enter task description"></textarea>
+          <textarea id="task-description" placeholder="Введите описание"></textarea>
 
           <label for="task-deadline">Крайний срок</label>
           <input type="date" id="task-deadline" />
@@ -76,7 +76,7 @@
     </div>
     <div id="edit_popup" class="hidden">
       <div class="popup-content">
-        <button class="close-btn">&times;</button>
+        <button id="close-edit-popup-btn" class="close-btn">✖</button>
         <h2>Изменить задачу</h2>
         <label for="edit_task-name">Название *:</label>
         <input type="text" id="edit_task-name" placeholder="Введите название задачи">
@@ -86,11 +86,11 @@
 
         <label for="edit_task-category">Категория</label>
         <select id="edit_task-category" required>
-          <option value="none">Нет</option>
-          <option value="health">Здоровье</option>
-          <option value="work">Работа</option>
-          <option value="study">Учёба</option>
-          <option value="family">Семья</option>
+          <option value="Нет">Нет</option>
+          <option value="Здоровье">Здоровье</option>
+          <option value="Работа">Работа</option>
+          <option value="Учёба">Учёба</option>
+          <option value="Семья">Семья</option>
           <!-- Здесь можно добавлять другие категории -->
         </select>
         

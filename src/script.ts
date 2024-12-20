@@ -19,6 +19,7 @@ const taskContainer = document.getElementById("task-container")!;
 const addTaskBtn = document.getElementById("add-task-btn")!;
 const popup = document.getElementById("popup")!;
 const closePopupBtn = document.getElementById("close-popup-btn")!;
+const closeEditPopupBtn = document.getElementById("close-edit-popup-btn")!;
 const form = document.getElementById("task-form") as HTMLFormElement;
 
 let tasks: Task[] = JSON.parse(localStorage.getItem("tasks") || "[]");
@@ -32,6 +33,9 @@ addTaskBtn.addEventListener("click", () => {
 closePopupBtn.addEventListener("click", () => {
   closePopup();
 });
+closeEditPopupBtn.addEventListener("click", () => {
+  closeEditPopup();
+});
 
 // Функция для закрытия попапа
 function closePopup() {
@@ -40,6 +44,7 @@ function closePopup() {
   form.reset();
 }
 function closeEditPopup() {
+  console.log("dfdfsd");
   document.getElementById('edit_popup')?.classList.add('hidden');
   currentTaskId = null; // Сброс ID задачи
   form.reset();
@@ -569,6 +574,6 @@ function saveTaskEdits() {
 // Добавляем обработчики
 document.getElementById('submit-edit-task')?.addEventListener('click', saveTaskEdits);
 document.querySelector('.close-btn')?.addEventListener('click', closePopup);
-document.querySelector('.close-btn')?.addEventListener('click', closeEditPopup);
+
 
 renderTasks();
