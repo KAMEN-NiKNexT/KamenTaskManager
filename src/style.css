@@ -53,7 +53,7 @@
 .popup-content .submit-btn {
   padding: 0.5rem 1rem;
   font-size: 1rem;
-  background-color: #0cf520;
+  background-color: #0cdb74;
   color: white;
   border: none;
   border-radius: 5px;
@@ -62,7 +62,7 @@
 }
 
 .popup-content .submit-btn:hover {
-  background-color: #0cf520;
+  background-color: #0cdb74;
 }
 
 /* Close Button */
@@ -288,7 +288,7 @@ p, span, li {
 }
 
 .active-tab {
-  background-color: #0cf520;
+  background-color: #0cdb74;
   color: white;
 }
 
@@ -304,7 +304,7 @@ p, span, li {
 /* Основной стиль для кнопки */
 #add-task-btn {
   width: 100%; /* Растягиваем кнопку на всю ширину экрана */
-  background-color: #0cf520; /* Ярко-зеленый фон кнопки */
+  background-color: #0cdb74; /* Ярко-зеленый фон кнопки */
   color: #ffffff; /* Белый цвет текста */
   border: none; /* Без рамки */
   border-radius: 12px; /* Легкое закругление */
@@ -313,7 +313,7 @@ p, span, li {
   font-size: 18px; /* Размер шрифта */
   cursor: pointer; /* Курсор при наведении */
   transition: all 0.3s ease; /* Плавная анимация при изменении */
-  box-shadow: 0 2px 6px #0cf5204d; /* Легкое свечение вокруг кнопки */
+  box-shadow: 0 2px 6px #0cdb744d; /* Легкое свечение вокруг кнопки */
 
   animation: glowing 1.5s ease-in-out infinite; /* Анимация свечения при наведении */
   margin-bottom: 5px;
@@ -321,7 +321,7 @@ p, span, li {
 
 /* Стиль кнопки при наведении */
 #add-task-btn:hover {
-  background-color: #0cf520; /* Ярко-зеленый фон при наведении */
+  background-color: #0cdb74; /* Ярко-зеленый фон при наведении */
   box-shadow: 0 0 20px #00ff00b3; /* Увеличенное свечение */
 }
 
@@ -338,9 +338,9 @@ p, span, li {
 
 /* Дополнительный эффект свечения */
 @keyframes glowing {
-  0% { box-shadow: 0 0 2px #0cf520, 0 0 5px #0cf520, 0 0 7px #0cf520; }
-  50% { box-shadow: 0 0 10px #0cf520, 0 0 15px #0cf520, 0 0 20px #0cf520; }
-  100% { box-shadow: 0 0 2px #0cf520, 0 0 5px #0cf520, 0 0 7px #0cf520; }
+  0% { box-shadow: 0 0 2px #0cdb74, 0 0 5px #0cdb74, 0 0 7px #0cdb74; }
+  50% { box-shadow: 0 0 10px #0cdb74, 0 0 15px #0cdb74, 0 0 20px #0cdb74; }
+  100% { box-shadow: 0 0 2px #0cdb74, 0 0 5px #0cdb74, 0 0 7px #0cdb74; }
 }
 
 
@@ -376,7 +376,7 @@ p, span, li {
 }
 
 #category-filter option:checked {
-  background-color: #0cf520; /* Зеленый фон для выбранного пункта */
+  background-color: #0cdb74; /* Зеленый фон для выбранного пункта */
 }
 
 #category-filter:focus {
@@ -497,7 +497,7 @@ p, span, li {
 /* --- Стили для каждой большой кнопки --- */
 .task-actions .complete-btn {
   width: 210px;
-  background-color: #0cf520; /* Неоново-зеленый */
+  background-color: #0cdb74; /* Неоново-зеленый */
 }
 
 .task-actions .cancel-btn {
@@ -505,7 +505,7 @@ p, span, li {
   background-color: #121212; /* Красный цвет */
 }
 .task-actions .complete-btn:hover {
-  background-color: #15d325; /* Неоново-зеленый */
+  background-color: #0cdb74; /* Неоново-зеленый */
 }
 
 .task-actions .cancel-btn:hover {
@@ -539,7 +539,7 @@ p, span, li {
 
 .task.dragging {
   opacity: 0.5;
-  border: 2px dashed #0cf520;
+  border: 2px dashed #0cdb74;
   border-radius: 12px; /* Круглая кнопка */
 }
 
@@ -599,7 +599,7 @@ p, span, li {
   width: 18px;
   height: 18px;
   cursor: pointer;
-  accent-color: #0cf520; /* Цвет для чекбокса */
+  accent-color: #0cdb74; /* Цвет для чекбокса */
 }
 
 /* Стиль кнопок редактирования и удаления */
@@ -670,7 +670,7 @@ p, span, li {
 /* Стиль для завершенной задачи */
 .task.completed {
   background-color: #ffffff; /* Легкий зеленый фон */
-  border-left: 6px solid #0cf520; /* Зеленая полоска для завершенной задачи */
+  border-left: 6px solid #0cdb74; /* Зеленая полоска для завершенной задачи */
   text-decoration: line-through; /* Перечеркнутый текст */
   color: #7e7e7e; /* Серый текст */
 }
